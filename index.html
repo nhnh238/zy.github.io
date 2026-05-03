@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>一梦赤壁・多元情感赏析</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "KaiTi", "STKaiti", "SimSun", serif;
+}
+body {
+    background: #f0ece6;
+    background-image: url("背景.png");
+    background-size: 110%;
+    background-position: center top;
+    background-attachment: fixed;
+    min-height: 100vh;
+    color: #333;
+    overflow-x: hidden;
+    position: relative;
+}
+
+
+
+/* 江水波浪动画 */
+.river-wave {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.river-wave::before,
+.river-wave::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    background: url("data:image/svg+xml,%3Csvg width='1920' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='waveGradient' x1='0%' y1='0%' x2='0%' y2='100%'%3E%3Cstop offset='0%' style='stop-color:%23a8d8ea;stop-opacity:0.3'/%3E%3Cstop offset='100%' style='stop-color:%236495ed;stop-opacity:0.5'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0,150 C100,120 200,180 300,150 C400,120 500,180 600,150 C700,120 800,180 900,150 C1000,120 1100,180 1200,150 C1300,120 1400,180 1500,150 C1600,120 1700,180 1800,150 C1900,120 2000,180 2100,150 L2100,300 L0,300 Z' fill='url(%23waveGradient)'/%3E%3Cpath d='M0,180 C150,140 250,220 400,180 C550,140 650,220 800,180 C950,140 1050,220 1200,180 C1350,140 1450,220 1600,180 C1750,140 1850,220 2000,180 L2000,300 L0,300 Z' fill='%2387ceeb' opacity='0.2'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    animation: river 15s ease-in-out infinite;
+    opacity: 0.7;
+}
+
+.river-wave::after {
+    animation-delay: -7.5s;
+    opacity: 0.5;
+    transform: translateY(20px);
+}
+
+@keyframes river {
+    0% {
+        transform: translateX(0) translateY(0);
+    }
+    50% {
+        transform: translateX(-25%) translateY(-10px);
+    }
+    100% {
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* 毛笔书写标题动画 */
+.title-box {
+    text-align: center;
+    margin: 60px auto 40px;
+    opacity: 0;
+    animation: fadeIn 1.5s ease forwards;
+    max-width: 800px;
+    padding: 30px;
+    background: rgba(255,255,255,0.7);
+    border: 2px solid #8b4c39;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(139,76,57,0.1);
+    backdrop-filter: blur(3px);
+}
+.title {
+    font-size: 2.8rem;
+    letter-spacing: 8px;
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+    color: #554838;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    width: 0;
+    overflow: hidden;
+    border-right: 2px solid #8b4c39;
+    animation: writeTitle 3s steps(24) forwards;
+}
+@keyframes writeTitle {
+    to { width: 100%; border-right: none; }
+}
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+/* 场景卡片 */
+.scene {
+    max-width: 860px;
+    margin: 0 auto 40px;
+    padding: 50px;
+    background: rgba(255,255,255,0.6);
+    border: 2px solid #c8c2b6;
+    border-radius: 8px;
+    backdrop-filter: blur(3px);
+    display: none;
+    animation: fadeScene 1.2s ease forwards;
+    position: relative;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+.scene::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='800' height='600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paper' x='0' y='0' width='100%' height='100%'%3E%3CfeTurbulence baseFrequency='0.02' numOctaves='2' seed='42'%3E%3C/feTurbulence%3E%3CfeDisplacementMap in='SourceGraphic' scale='5'%3E%3C/feDisplacementMap%3E%3C/filter%3E%3Crect width='800' height='600' fill='none' filter='url(%23paper)' opacity='0.05'/%3E%3C/svg%3E");
+    pointer-events: none;
+}
+.scene.active { display: block; }
+@keyframes fadeScene {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 角色卡片 */
+.role-group {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+.role-card {
+    width: 200px;
+    border: 2px solid #8b4c39;
+    border-radius: 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.4s;
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(139,76,57,0.1);
+}
+.role-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(139,76,57,0.05) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+.role-card:hover {
+    transform: translateY(-6px);
+    border-color: #6b3c29;
+    box-shadow: 0 6px 16px rgba(139,76,57,0.15);
+}
+.role-card:hover::before {
+    opacity: 1;
+}
+.role-img {
+    width: 100%;
+    height: 230px;
+    object-fit: cover;
+    object-position: center 20%;
+    border-bottom: 1px solid #c8c2b6;
+    animation: floatChar 3.2s ease-in-out infinite;
+    filter: sepia(0.2) contrast(1.05) brightness(0.9);
+    transition: filter 0.4s;
+}
+.role-card:hover .role-img {
+    filter: sepia(0.25) contrast(1.1) brightness(0.95);
+}
+@keyframes floatChar {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+    100% { transform: translateY(0); }
+}
+.role-info { padding: 16px; }
+.role-card h3 { font-size: 1.4rem; margin-bottom: 6px; }
+.role-card p { font-size: 0.95rem; color: #555; }
+
+/* 剧情文本逐字浮现 */
+.text-draw {
+    opacity: 0;
+    animation: drawText 1.2s ease forwards;
+    background: rgba(255,255,255,0.7);
+    border: 2px solid #8b4c39;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(139,76,57,0.1);
+    backdrop-filter: blur(3px);
+}
+@keyframes drawText { to { opacity: 1; } }
+
+.poem {
+    font-size: 1.7rem;
+    text-align: center;
+    line-height: 2;
+    margin: 26px 0;
+    letter-spacing: 1px;
+}
+.poem .red { color: #8b4c39; font-weight: bold; }
+
+.task-box {
+    background: #f3efe7;
+    border: 1px solid #c8c2b6;
+    border-radius: 8px;
+    padding: 22px;
+    margin: 20px 0;
+}
+.task-title {
+    font-size: 1.3rem;
+    color: #8b4c39;
+    margin-bottom: 10px;
+}
+.task-text {
+    font-size: 1.2rem;
+    line-height: 1.7;
+}
+
+.input-box {
+    width: 100%;
+    height: 140px;
+    padding: 16px;
+    font-size: 1.15rem;
+    border: 1px solid #999;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.9);
+    margin-top: 16px;
+    resize: none;
+}
+
+.btn {
+    display: block;
+    margin: 30px auto;
+    padding: 12px 36px;
+    background: rgba(255,255,255,0.8);
+    border: 2px solid #8b4c39;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    font-family: "KaiTi", "STKaiti", serif;
+    color: #554838;
+    box-shadow: 0 2px 8px rgba(139,76,57,0.1);
+}
+.btn:hover {
+    background: rgba(139,76,57,0.1);
+    border-color: #6b3c29;
+    box-shadow: 0 4px 12px rgba(139,76,57,0.15);
+    transform: translateY(-2px);
+}
+.btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(139,76,57,0.1);
+}
+.btn span {
+    position: relative;
+}
+
+/* 报告 */
+.report {
+    padding: 30px;
+    background: rgba(255,255,255,0.8);
+    border: 1px solid #d6d0c5;
+    border-radius: 10px;
+}
+.report h3 {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #8b4c39;
+    margin-bottom: 20px;
+}
+.report-item {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    padding: 10px 14px;
+    border-left: 2px solid #8b4c39;
+    margin: 12px 0;
+}
+
+/* 底部导航栏 */
+.nav-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: rgba(248,245,240,0.95);
+    border-top: 2px solid #8b4c39;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+}
+.nav-item {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    color: #554838;
+    font-size: 1rem;
+    position: relative;
+}
+.nav-item:hover {
+    color: #8b4c39;
+}
+.nav-item.active {
+    color: #8b4c39;
+    font-weight: bold;
+}
+.nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background: #8b4c39;
+}
+
+/* 调整内容区域，避免被导航栏遮挡 */
+.scene {
+    margin-bottom: 80px;
+}
+</style>
+</head>
+
+<body>
+<div class="river-wave"></div>
+
+<div style="max-width:900px; margin:0 auto; padding:30px 20px;">
+    <div class="title-box">
+        <h1 class="title">一梦赤壁・多元情感赏析</h1>
+        <p style="text-align:center; margin-top:10px; font-size:1.1rem; color:#555;">《念奴娇・赤壁怀古》沉浸式剧本杀</p>
+    </div>
+
+    <!-- 角色选择 -->
+    <div class="scene active" id="start">
+        <div class="text-draw" style="text-align:center; font-size:1.3rem; line-height:1.8;">
+            大江东去，千古风流。请选择你的身份，入梦赤壁。
+        </div>
+        <div class="role-group">
+            <div class="role-card" onclick="startRole('su')">
+                <img class="role-img" src="苏轼.png" alt="苏轼">
+                <div class="role-info"><h3>苏轼</h3><p>被贬黄州｜旷达怀古</p></div>
+            </div>
+            <div class="role-card" onclick="startRole('zhou')">
+                <img class="role-img" src="周瑜.png" alt="周瑜">
+                <div class="role-info"><h3>周瑜</h3><p>少年英雄｜儒将风度</p></div>
+            </div>
+            <div class="role-card" onclick="startRole('mo')">
+                <img class="role-img" src="现代人2.png" alt="现代人">
+                <div class="role-info"><h3>现代人</h3><p>穿越解密｜多元赏析</p></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================== -->
+    <!-- 苏轼线：梦前 → 梦中 → 梦醒 -->
+    <div class="scene" id="su1">
+        <div class="text-draw">【梦前・赤壁写景】<br>你被贬黄州，立于赤矶山下，见大江东去，浪涛奔涌。</div>
+        <div class="poem">大江东去，浪淘尽，千古风流人物。</div>
+        <div class="task-box">
+            <div class="task-title">【炼字赏析】</div>
+            <div class="task-text">请写出“淘”字的意境与情感。</div>
+        </div>
+        <textarea class="input-box"></textarea>
+        <button class="btn" onclick="go('su2')"><span>进入梦中</span></button>
+    </div>
+
+    <div class="scene" id="su2">
+        <div class="text-draw">【梦中・遥想周郎】<br>你追忆周瑜年少得志，雄姿英发，谈笑破曹。</div>
+        <div class="poem">遥想公瑾当年，小乔初嫁了，雄姿英发。</div>
+        <div class="task-box">
+            <div class="task-title">【映衬手法】</div>
+            <div class="task-text">周瑜的辉煌与你人生失意形成怎样的对照？</div>
+        </div>
+        <textarea class="input-box"></textarea>
+        <button class="btn" onclick="go('su3')"><span>进入梦醒</span></button>
+    </div>
+
+    <div class="scene" id="su3">
+        <div class="text-draw">【梦醒・旷达释怀】<br>你看透人生起落，举杯酹月，归于豁达。</div>
+        <div class="poem">人生如梦，<span class="red">一尊还酹江月</span>。</div>
+        <div class="task-box">
+            <div class="task-title">【情感书写】</div>
+            <div class="task-text">请写下你此刻的心境。</div>
+        </div>
+        <textarea class="input-box"></textarea>
+        <button class="btn" onclick="makeReport('苏轼')"><span>生成赏析报告</span></button>
+    </div>
+
+    <!-- ================================== -->
+    <!-- 周瑜线 -->
+    <div class="scene" id="zhou1">
+        <div class="text-draw">【梦前・赤壁烽火】<br>你指挥三军，火烧赤壁，一战成名。</div>
+        <div class="poem">谈笑间，樯橹灰飞烟灭。</div>
+        <div class="task-box">
+            <div class="task-title">【英雄形象】</div>
+            <div class="task-text">请写出“羽扇纶巾”体现的儒将气质。</div>
+        </div>
+        <textarea class="input-box"></textarea>
+        <button class="btn" onclick="go('zhou2')"><span>千年一瞬</span></button>
+    </div>
+
+    <div class="scene" id="zhou2">
+        <div class="text-draw">【梦中・遇见苏轼】<br>你看见苏轼被贬失意，借你的辉煌反衬自身感慨。</div>
+        <div class="task-box">
+            <div class="task-title">【反衬理解】</div>
+            <div class="task-text">苏轼为何极力书写你的英雄形象？</div>
+        </div>
+        <textarea class="input-box"></textarea>
+        <button class="btn" onclick="go('zhou3')"><span>江月释怀</span></button>
+    </div>
+
+    <div class="scene" id="zhou3">
+        <div class="poem">人生如梦，<span class="red">一尊还酹江月</span>。</div>
+        <div class="task-box">
+            <div class="task-title">【英雄共情】</div>
+            <div class="task-text">以周瑜视角，理解苏轼的旷达。</div>
+        </div>
+        <textarea class="input-box"></textarea>
+        <button class="btn" onclick="makeReport('周瑜')"><span>生成赏析报告</span></button>
+    </div>
+
+    <!-- ================================== -->
+    <!-- 现代人线 -->
+    <div class="scene" id="mo1">
+        <div class="text-draw">【梦前・穿越赤壁】<br>你站在赤壁之下，读懂词中三层梦境结构。</div>
+        <div class="task-box">
+            <div class="task-title">【结构梳理】</div>
+            <div class="task-text">请简述梦前—梦中—梦醒的情感脉络。</div>
+        </div>
+        <textarea class="input-box"></textarea>
+        <button class="btn" onclick="go('mo2')"><span>进入梦中</span></button>
+    </div>
+
+    <div class="scene" id="mo2">
+        <div class="text-draw">【梦中・手法解读】<br>你看见映衬、对比、借古抒怀的艺术匠心。</div>
+        <div class="task-box">
+            <div class="task-title">【手法赏析】</div>
+            <div class="task-text">请分析对比映衬的表达效果。</div>
+        </div>
+        <textarea class="input-box"></textarea>
+        <button class="btn" onclick="go('mo3')"><span>梦醒终章</span></button>
+    </div>
+
+    <div class="scene" id="mo3">
+        <div class="poem">人生如梦，<span class="red">一尊还酹江月</span>。</div>
+        <div class="task-box">
+            <div class="task-title">【多元情感总结】</div>
+            <div class="task-text">总结全词情感与主旨。</div>
+        </div>
+        <textarea class="input-box"></textarea>
+        <button class="btn" onclick="makeReport('现代人')"><span>生成赏析报告</span></button>
+    </div>
+
+    <!-- 报告 -->
+    <div class="scene" id="reportPage">
+        <div class="report" id="reportContent">
+            <h3>🎐 多元情感赏析报告</h3>
+            <div class="report-item">【赏析视角】<span id="r-role"></span></div>
+            <div class="report-item">【炼字理解】精准体会字词意境与画面感</div>
+            <div class="report-item">【艺术手法】掌握对比/映衬/借古抒怀</div>
+            <div class="report-item">【情感脉络】读懂豪迈→怅惘→旷达的变化</div>
+            <div class="report-item">【主旨核心】理解人生如梦与江月释怀</div>
+        </div>
+        <button class="btn" onclick="reset()"><span>重新入梦</span></button>
+    </div>
+</div>
+
+<!-- 底部导航栏 -->
+<div class="nav-bar">
+    <div class="nav-item active" onclick="showNav('start')">开场动画</div>
+    <div class="nav-item" onclick="showNav('su1')">三幕剧情</div>
+    <div class="nav-item" onclick="showNav('su2')">答题交互</div>
+    <div class="nav-item" onclick="showNav('reportPage')">赏析报告</div>
+</div>
+
+<script>
+let nowRole = "";
+function startRole(r) {
+    nowRole = r;
+    show("start", false);
+    if(r==="su") show("su1",true);
+    if(r==="zhou") show("zhou1",true);
+    if(r==="mo") show("mo1",true);
+}
+function show(id, is) {
+    let el = document.getElementById(id);
+    if(is) el.classList.add("active");
+    else el.classList.remove("active");
+}
+// 存储所有答案
+let answers = {};
+
+function go(to) {
+    // 获取当前活动场景
+    const currentScene = document.querySelector(".scene.active");
+    if (currentScene) {
+        const sceneId = currentScene.id;
+        // 获取当前场景的输入框
+        const inputBox = currentScene.querySelector(".input-box");
+        if (inputBox) {
+            const answer = inputBox.value.trim();
+            if (!answer) {
+                alert("请先完成当前题目的回答！");
+                return;
+            }
+            // 保存答案
+            answers[sceneId] = answer;
+        }
+    }
+    document.querySelectorAll(".scene").forEach(s=>s.classList.remove("active"));
+    show(to, true);
+}
+function makeReport(name) {
+    // 获取当前活动场景
+    const currentScene = document.querySelector(".scene.active");
+    if (currentScene) {
+        const sceneId = currentScene.id;
+        // 获取当前场景的输入框
+        const inputBox = currentScene.querySelector(".input-box");
+        if (inputBox) {
+            const answer = inputBox.value.trim();
+            if (!answer) {
+                alert("请先完成当前题目的回答！");
+                return;
+            }
+            // 保存答案
+            answers[sceneId] = answer;
+        }
+    }
+    
+    // 根据角色获取题目和答案
+    let roleAnswers = [];
+    if (name === '苏轼') {
+        roleAnswers = [
+            { question: "请写出“淘”字的意境与情感。", answer: answers['su1'] || '', key: 'su1' },
+            { question: "周瑜的辉煌与你人生失意形成怎样的对照？", answer: answers['su2'] || '', key: 'su2' },
+            { question: "请写下你此刻的心境。", answer: answers['su3'] || '', key: 'su3' }
+        ];
+    } else if (name === '周瑜') {
+        roleAnswers = [
+            { question: "请写出“羽扇纶巾”体现的儒将气质。", answer: answers['zhou1'] || '', key: 'zhou1' },
+            { question: "苏轼为何极力书写你的英雄形象？", answer: answers['zhou2'] || '', key: 'zhou2' },
+            { question: "以周瑜视角，理解苏轼的旷达。", answer: answers['zhou3'] || '', key: 'zhou3' }
+        ];
+    } else if (name === '现代人') {
+        roleAnswers = [
+            { question: "请简述梦前—梦中—梦醒的情感脉络。", answer: answers['mo1'] || '', key: 'mo1' },
+            { question: "请分析对比映衬的表达效果。", answer: answers['mo2'] || '', key: 'mo2' },
+            { question: "总结全词情感与主旨。", answer: answers['mo3'] || '', key: 'mo3' }
+        ];
+    }
+    
+    // 生成报告内容
+    let reportContent = `<h3>🎐 多元情感赏析报告</h3>`;
+    reportContent += `<div class="report-item">【赏析视角】${name}</div>`;
+    
+    // 添加各题答案
+    roleAnswers.forEach((item, index) => {
+        reportContent += `<div class="report-section"><div class="report-title">第${index + 1}题：${item.question}</div>`;
+        reportContent += `<div class="report-answer">你的答案：${item.answer}</div>`;
+        reportContent += `<div class="report-analysis">${generateAnalysis(item.question, item.answer, name)}</div></div>`;
+    });
+    
+    // 添加综合评价
+    reportContent += `<div class="report-summary">${generateSummary(roleAnswers, name)}</div>`;
+    
+    document.getElementById("reportContent").innerHTML = reportContent;
+    go("reportPage");
+}
+
+// 根据答案生成分析
+function generateAnalysis(question, answer, role) {
+    let analysis = "";
+    const answerLength = answer.length;
+    
+    if (question.includes("淘")) {
+        if (answerLength >= 30) {
+            analysis = `【深度分析】你的回答较为深入。"淘"字用得极妙，既写出江水冲刷的力度，又暗含历史淘洗的沧桑感，体现了苏轼对历史变迁的深刻感悟。`;
+        } else if (answerLength >= 15) {
+            analysis = `【分析】你理解了"淘"字的基本含义。这个字生动描绘了江水奔腾的景象，也象征着时间对历史人物的筛选。`;
+        } else {
+            analysis = `【提示】可以进一步思考"淘"字的双重含义：既指江水的冲刷，也指历史对英雄人物的淘洗。`;
+        }
+    } else if (question.includes("对照") || question.includes("英雄形象")) {
+        if (answerLength >= 30) {
+            analysis = `【深度分析】你深刻理解了对比映衬的手法。周瑜的年少得志与苏轼的中年失意形成鲜明对照，这种写法更能凸显苏轼的旷达情怀。`;
+        } else if (answerLength >= 15) {
+            analysis = `【分析】你注意到了周瑜与苏轼的对比关系。这种对比是词的重要艺术手法，增强了情感表达的力度。`;
+        } else {
+            analysis = `【提示】可以思考周瑜的"雄姿英发"与苏轼"早生华发"之间的对比效果。`;
+        }
+    } else if (question.includes("心境") || question.includes("旷达")) {
+        if (answerLength >= 30) {
+            analysis = `【深度分析】你准确把握了苏轼的旷达心境。在人生低谷时能有"一尊还酹江月"的超然，体现了苏轼独特的生命智慧。`;
+        } else if (answerLength >= 15) {
+            analysis = `【分析】你理解了苏轼的豁达态度。人生如梦，但词人并未沉溺悲伤，而是以江月为寄托，寻求精神解脱。`;
+        } else {
+            analysis = `【提示】可以结合"人生如梦，一尊还酹江月"来理解苏轼的旷达情怀。`;
+        }
+    } else if (question.includes("情感脉络")) {
+        if (answerLength >= 30) {
+            analysis = `【深度分析】你清晰梳理了词的情感脉络。从"大江东去"的豪迈，到"早生华发"的怅惘，再到"一尊还酹江月"的旷达，层次分明。`;
+        } else if (answerLength >= 15) {
+            analysis = `【分析】你抓住了情感变化的主线。词中情感经历了从豪迈到怅惘再到旷达的转变。`;
+        } else {
+            analysis = `【提示】可以按照梦前、梦中、梦醒三个阶段来梳理情感变化。`;
+        }
+    } else if (question.includes("对比映衬")) {
+        if (answerLength >= 30) {
+            analysis = `【深度分析】你深入理解了对比映衬的艺术效果。词中运用了多重对比：古今对比、人我对比、虚实对比，使主题更加深刻。`;
+        } else if (answerLength >= 15) {
+            analysis = `【分析】你注意到了对比手法的运用。对比映衬是这首词重要的艺术特色，增强了表现力。`;
+        } else {
+            analysis = `【提示】可以分析周瑜与苏轼的对比、历史与现实的对比等。`;
+        }
+    } else if (question.includes("主旨")) {
+        if (answerLength >= 30) {
+            analysis = `【深度分析】你准确把握了全词主旨。"人生如梦"不是消极避世，而是一种超越世俗的旷达，体现了苏轼独特的生命观。`;
+        } else if (answerLength >= 15) {
+            analysis = `【分析】你理解了词的核心思想。人生短暂如梦，但词人并未悲观，而是以豁达的态度面对。`;
+        } else {
+            analysis = `【提示】可以结合"一尊还酹江月"来理解苏轼的人生态度。`;
+        }
+    } else if (question.includes("儒将气质")) {
+        if (answerLength >= 30) {
+            analysis = `【深度分析】你深刻理解了"羽扇纶巾"的儒将形象。这四个字不仅写出了周瑜的儒雅风度，更体现了他作为军事家的从容自信。`;
+        } else if (answerLength >= 15) {
+            analysis = `【分析】你抓住了儒将的特点。"羽扇纶巾"展现了周瑜儒雅而不失威严的形象。`;
+        } else {
+            analysis = `【提示】可以对比传统武将形象，体会"羽扇纶巾"所体现的儒将风采。`;
+        }
+    }
+    
+    return analysis;
+}
+
+// 生成综合评价
+function generateSummary(answers, role) {
+    const avgLength = answers.reduce((sum, item) => sum + item.answer.length, 0) / answers.length;
+    
+    let summary = `<div class="report-summary-title">📝 综合评价</div>`;
+    
+    if (avgLength >= 30) {
+        summary += `<div class="summary-content">你的赏析非常深入，对词的理解达到了较高水平。`;
+        summary += `你不仅准确把握了字词的含义，还能深入分析艺术手法和情感内涵。`;
+        summary += `继续保持这种细致的阅读习惯，你的文学鉴赏能力会不断提升。</div>`;
+    } else if (avgLength >= 15) {
+        summary += `<div class="summary-content">你的赏析较为到位，基本理解了词的主要内容和情感。`;
+        summary += `如果想要更深入的理解，可以尝试从多个角度分析，比如历史背景、艺术手法等。</div>`;
+    } else {
+        summary += `<div class="summary-content">你的回答比较简洁，可以尝试更细致地分析。`;
+        summary += `多读几遍词作，结合注释和背景资料，相信你会有更深的感悟。</div>`;
+    }
+    
+    // 根据角色添加个性化建议
+    if (role === '苏轼') {
+        summary += `<div class="summary-tip">💡 小贴士：苏轼的词往往蕴含深刻的人生哲理，可以多读他的其他作品，体会其旷达的人生态度。</div>`;
+    } else if (role === '周瑜') {
+        summary += `<div class="summary-tip">💡 小贴士：从历史人物视角理解词作，可以更好地体会词中对比手法的妙处。</div>`;
+    } else if (role === '现代人') {
+        summary += `<div class="summary-tip">💡 小贴士：尝试从不同角度解读经典作品，会有不同的收获。</div>`;
+    }
+    
+    return summary;
+}
+function reset() {
+    document.querySelectorAll(".scene").forEach(s=>s.classList.remove("active"));
+    show("start", true);
+    document.querySelectorAll(".input-box").forEach(i=>i.value="");
+    // 更新导航栏状态
+    document.querySelectorAll(".nav-item").forEach(item=>item.classList.remove("active"));
+    document.querySelector(".nav-item:nth-child(1)").classList.add("active");
+}
+
+function showNav(id) {
+    // 隐藏所有场景
+    document.querySelectorAll(".scene").forEach(s=>s.classList.remove("active"));
+    // 显示目标场景
+    show(id, true);
+    // 更新导航栏状态
+    document.querySelectorAll(".nav-item").forEach(item=>item.classList.remove("active"));
+    // 根据id设置对应的导航项为active
+    const navIndex = {
+        "start": 0,
+        "su1": 1,
+        "su2": 2,
+        "reportPage": 3
+    };
+    if (navIndex[id] !== undefined) {
+        document.querySelectorAll(".nav-item")[navIndex[id]].classList.add("active");
+    }
+}
+</script>
+</body>
+</html>
